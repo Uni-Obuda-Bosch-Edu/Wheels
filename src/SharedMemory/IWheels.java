@@ -4,7 +4,7 @@ public interface IWheels {
 
 	double getCurrentTorqueInNewton();
 	double getMaximumTorqueInNewton();
-	double getFrictionalCoefficientWithRoad();
+	//double getFrictionalCoefficientWithRoad();
 	
 	double getMaximumBrakeTorqueInNewton();
 	double getFrictionalCoefficientOfBrakes();
@@ -22,5 +22,6 @@ public interface IWheels {
 	double getMaximumWheelsTurnDegree();
 
 	double getTotalMassInKg();
+	double getInnerFrictionalCoefficientInNewton();
 
 }

@@ -23,13 +23,13 @@ public class PointsExample extends JFrame {
     
     public void drawVector(int x, int y, int xl, int yl)
     {
-    	dpnl.drawVecotr(0, 0, 100, 100);
+    	dpnl.drawVector(0, 0, xl, yl);
     }
 
     public static void main(String[] args) {
 
     	 PointsExample ex = new PointsExample();
          ex.setVisible(true);
-         ex.drawVector(0,0,100,100);
+         ex.drawVector(0,0,50,100);
     }
 }

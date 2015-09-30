@@ -5,11 +5,22 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.*;
+import java.awt.geom.*;
 
 import javax.swing.JPanel;
 
 class DrawPanel extends JPanel {
 
+	double phi;
+    int barb;
+	
+    public DrawPanel()
+    {
+        phi = Math.toRadians(40);
+        barb = 20;
+    }
+    
 	private void clearDrawing(Graphics g) {
 
 		Graphics2D g2d = (Graphics2D) g;
@@ -23,7 +34,7 @@ class DrawPanel extends JPanel {
         g2d.clearRect(0, 0, w, h);
 	}
 	
-	public void drawVecotr(int x, int y, int xl, int yl) {
+	public void drawVector(int x, int y, int xl, int yl) {
 		
 		vector_x1 = x;
 		vector_y1 = y;
@@ -45,23 +56,22 @@ class DrawPanel extends JPanel {
         
         g2d.drawLine(vector_x1, vector_y1, vector_x2, vector_y2);
 
-        //draw arrow
-        if(vector_x2 > vector_x1)
+        drawArrowHead(g2d, new Point(vector_x2, vector_y2), new Point(vector_x1, vector_y1), Color.blue);
+    }
+    
+    private void drawArrowHead(Graphics2D g2, Point tip, Point tail, Color color)
+    {
+        g2.setPaint(color);
+        double dy = tip.y - tail.y;
+        double dx = tip.x - tail.x;
+        double theta = Math.atan2(dy, dx);
+        double x, y, rho = theta + phi;
+        for(int j = 0; j < 2; j++)
         {
-        	g2d.drawLine(vector_x2, vector_y2, vector_x2-10, vector_y2);
-        }
-        else
-        {
-        	g2d.drawLine(vector_x2, vector_y2, vector_x2+10, vector_y2);
-        }
-        
-        if(vector_y2 > vector_x1)
-        {
-        	g2d.drawLine(vector_x2, vector_y2, vector_x2, vector_y2-10);
-        }
-        else
-        {
-        	g2d.drawLine(vector_x2, vector_y2, vector_x2, vector_y2+10);
+            x = tip.x - barb * Math.cos(rho);
+            y = tip.y - barb * Math.sin(rho);
+            g2.draw(new Line2D.Double(tip.x, tip.y, x, y));
+            rho = theta - phi;
         }
     }
 

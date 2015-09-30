@@ -50,6 +50,11 @@ public class TestDrive {
 		dummy.setCurrentTorqueInNewton(torque);
 	}
 	
+	public void SetBrakePedalPos(double percent)
+	{
+		dummy.setBrakePedalPosition(percent);
+	}
+	
 	class RefreshScreenTask extends TimerTask
 	{
 		@Override
@@ -63,8 +68,38 @@ public class TestDrive {
 		
 		TestDrive drive = new TestDrive();
 		drive.StartWheels();
-		drive.SetTorque(10000);
+		drive.SetTorque(3000);
+		drive.SetBrakePedalPos(1);
 		drive.StartDrawing();
+		
+		
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		drive.SetBrakePedalPos(0);
+		
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		drive.SetTorque(0);
+		drive.SetBrakePedalPos(1);
+		
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		drive.SetBrakePedalPos(0);
+		drive.SetTorque(-1000);
 	}
 
 }

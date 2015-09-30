@@ -21,9 +21,9 @@ public class PointsExample extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
-    public void drawVector(int x, int y, int xl, int yl)
+    public void drawVector(double x, double y, double xl, double yl)
     {
-    	dpnl.drawVector(0, 0, xl, yl);
+    	dpnl.drawVector(x, y, xl, yl);
     }
 
     public static void main(String[] args) {

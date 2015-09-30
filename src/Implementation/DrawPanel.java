@@ -17,8 +17,8 @@ class DrawPanel extends JPanel {
 	
     public DrawPanel()
     {
-        phi = Math.toRadians(40);
-        barb = 20;
+        phi = Math.toRadians(30);
+        barb = 10;
     }
     
 	private void clearDrawing(Graphics g) {
@@ -34,7 +34,7 @@ class DrawPanel extends JPanel {
         g2d.clearRect(0, 0, w, h);
 	}
 	
-	public void drawVector(int x, int y, int xl, int yl) {
+	public void drawVector(double x, double y, double xl, double yl) {
 		
 		vector_x1 = x;
 		vector_y1 = y;
@@ -42,10 +42,10 @@ class DrawPanel extends JPanel {
 		vector_y2 = yl;
 	}
 	
-	int vector_x1 = 0;
-	int vector_y1 = 0;
-	int vector_x2 = 0;
-	int vector_y2 = 0;
+	double vector_x1 = 0;
+	double vector_y1 = 0;
+	double vector_x2 = 0;
+	double vector_y2 = 0;
 	
     private void doDrawing(Graphics g) {
 
@@ -54,9 +54,11 @@ class DrawPanel extends JPanel {
         
         g2d.setColor(Color.blue);
         
-        g2d.drawLine(vector_x1, vector_y1, vector_x2, vector_y2);
+        g2d.drawLine((int)vector_x1, (int)vector_y1, (int)vector_x2, (int)vector_y2);
 
-        drawArrowHead(g2d, new Point(vector_x2, vector_y2), new Point(vector_x1, vector_y1), Color.blue);
+        drawArrowHead(g2d, new Point((int)vector_x2, (int)vector_y2), new Point((int)vector_x1, (int)vector_y1), Color.blue);
+        
+        this.repaint();
     }
     
     private void drawArrowHead(Graphics2D g2, Point tip, Point tail, Color color)

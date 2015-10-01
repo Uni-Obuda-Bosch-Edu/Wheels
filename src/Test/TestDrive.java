@@ -89,17 +89,37 @@ public class TestDrive {
 		TestDrive drive = new TestDrive();
 		drive.StartWheels();
 		drive.StartDrawing();
-		drive.SetTorque(3000);
-		drive.SetDriveWheelState(0.09);
+		drive.SetTorque(4000);
 		
 		Sleep(3000);
 		drive.SetTorque(0);
 		drive.SetBrakePedalPos(1);
-		Sleep(1000);
+		Sleep(2000);
 		drive.SetBrakePedalPos(0);
-		drive.SetTorque(-30);
+		drive.SetTorque(500);
+		double end = 0.09;
+		double current = 0;
+		
+		for(int i =0;i<100;i++)
+		{
+			current += end / 100;
+			drive.SetDriveWheelState(current);
+			Sleep(10);
+		}
+		
+		Sleep(3000);
+		drive.SetDriveWheelState(0);
+		drive.SetTorque(0);
+		drive.SetBrakePedalPos(1);
+		drive.SetBrakePedalPos(0);
 		Sleep(1000);
-		drive.SetDriveWheelState(-0.02);
+		drive.SetTorque(-1000);
+		Sleep(4000);
+		drive.SetDriveWheelState(-0.03);
+		Sleep(12000);
+		drive.SetDriveWheelState(+0.03);
+		Sleep(10000);
+		drive.SetBrakePedalPos(1);
 
 	}
 

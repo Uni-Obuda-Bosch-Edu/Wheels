@@ -1,5 +1,7 @@
 package Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -45,6 +47,11 @@ public class TestDrive {
 		wheels.StopRefreshing();
 	}
 	
+	public void SetDriveWheelState(double value)
+	{
+	    dummy.setDriveWheelStateZeroBasedDegree(value);
+	}
+	
 	public void SetTorque(double torque)
 	{
 		dummy.setCurrentTorqueInNewton(torque);
@@ -59,8 +66,21 @@ public class TestDrive {
 	{
 		@Override
 		public void run() {
-			VectorDefinition vect = wheels.getMotionVector();
-	        ex.drawVector(vect.getX1(), vect.getY1(), vect.getX2(), vect.getY2()); 
+			
+			List<VectorDefinition> vectors = new ArrayList<VectorDefinition>();
+			vectors.add(wheels.getMotionVector());
+			vectors.add(wheels.getPositionVector());
+			ex.drawVectors(vectors); 
+		}
+	}
+	
+	private static void Sleep(long sleepage)
+	{
+		try {
+			Thread.sleep(sleepage);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -68,38 +88,19 @@ public class TestDrive {
 		
 		TestDrive drive = new TestDrive();
 		drive.StartWheels();
-		drive.SetTorque(3000);
-		drive.SetBrakePedalPos(1);
 		drive.StartDrawing();
+		drive.SetTorque(3000);
+		drive.SetDriveWheelState(0.09);
 		
-		
-		try {
-			Thread.sleep(4000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		drive.SetBrakePedalPos(0);
-		
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		Sleep(3000);
 		drive.SetTorque(0);
 		drive.SetBrakePedalPos(1);
-		
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Sleep(1000);
 		drive.SetBrakePedalPos(0);
-		drive.SetTorque(-1000);
+		drive.SetTorque(-30);
+		Sleep(1000);
+		drive.SetDriveWheelState(-0.02);
+
 	}
 
 }

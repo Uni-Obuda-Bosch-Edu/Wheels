@@ -21,15 +21,15 @@ public class PointsExample extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
-    public void drawVector(double x, double y, double xl, double yl)
+    public void drawVectors(java.util.List<VectorDefinition> vectors)
     {
-    	dpnl.drawVector(x, y, xl, yl);
+    	dpnl.drawVectors(vectors);
     }
 
     public static void main(String[] args) {
 
     	 PointsExample ex = new PointsExample();
          ex.setVisible(true);
-         ex.drawVector(0,0,50,100);
+         
     }
 }

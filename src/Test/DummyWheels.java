@@ -48,7 +48,7 @@ public class DummyWheels implements IWheels {
 	@Override
 	public double getDistanceBetweenAxesInMeters() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 10;
 	}
 
 	@Override
@@ -62,22 +62,24 @@ public class DummyWheels implements IWheels {
 		return 0;
 	}
 
+	
+	private double driveWheelStateZeroBasedDegree = 0;
+	
 	@Override
 	public double getDriveWheelStateZeroBasedDegree() {
-		// TODO Auto-generated method stub
-		return 0;
+		return driveWheelStateZeroBasedDegree;
 	}
 
 	@Override
 	public double getMaximumDriveWheelStateZeroBasedDegree() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 280;
 	}
 
 	@Override
 	public double getMaximumWheelsTurnDegree() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 70;
 	}
 
 	@Override
@@ -96,6 +98,10 @@ public class DummyWheels implements IWheels {
 
 	void setCurrentTorqueInNewton(double currentTorqueInNewton) {
 		this.currentTorqueInNewton = currentTorqueInNewton;
+	}
+
+	void setDriveWheelStateZeroBasedDegree(double driveWheelStateZeroBasedDegree) {
+		this.driveWheelStateZeroBasedDegree = driveWheelStateZeroBasedDegree;
 	}
 
 }

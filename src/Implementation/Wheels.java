@@ -49,36 +49,106 @@ public class Wheels {
 		timer.cancel();
 	}
 	
-	VectorDefinition last = new VectorDefinition(0, 50, 0, 50);
-	VectorDefinition current = new VectorDefinition(0, 50, 0, 50);
+	VectorDefinition current = new VectorDefinition(100, 100, 101, 100);
 	
-	int xstart = 0;
-	int ystart = 50;
+	
+	double lastspeed;
+	
+	
+	VectorDefinition currentposvect = new VectorDefinition(100, 100, 101, 100);
+	
+	public VectorDefinition getPositionVector()
+	{
+		return currentposvect;
+	}
+	
+	boolean inreverse = false;
 	
 	class Refresher extends TimerTask
 	{
 		@Override
 		public void run() {
 			
-			last = current;
+			
 			
 			double innerForce = calcInnerFrictionalForce();
 			double brakingForce = calcBrakingForce(sharedMemory.getBrakePedalPosition());
-			double accForce = calcAccelerationForce(sharedMemory.getCurrentTorqueInNewton()); 
+			double accTorque = sharedMemory.getCurrentTorqueInNewton();
+			double accForce = calcAccelerationForce(accTorque); 
 		
 			
 			double resforce = calcResultantForce(innerForce,brakingForce,accForce);
 			double accel = calcAccel(resforce);
 			
-			double lastspeed = speed;
-			
 			speed = calcSpeed(accel,speed,((double)refreshInterval)/1000);
 			
 			double distance = speed * (((double)refreshInterval)/1000);
 			
-			current.setX1(last.getX1()+distance);
-			current.setX2(last.getX2()+distance + (speed - lastspeed));
+			double maxdrivewheelstate = sharedMemory.getMaximumDriveWheelStateZeroBasedDegree();
 			
+			double wheelpercent = (sharedMemory.getDriveWheelStateZeroBasedDegree() / maxdrivewheelstate); 
+			
+			double maxturndegree = sharedMemory.getMaximumWheelsTurnDegree();
+			
+			double wheelturn = wheelpercent*maxturndegree; 
+			//calculate turn of the car
+			//turning component of the speed
+			double turnspeed = speed * Math.sin(wheelturn);
+			double turned = turnspeed * ((double)refreshInterval)/1000;
+			
+			double angle = turned / (2*sharedMemory.getDistanceBetweenAxesInMeters()*Math.PI) * 360;
+			
+			currentposvect.setLength(10);
+			currentposvect.shiftOnArrow(distance);
+			currentposvect.Rotate(angle);
+			
+			current.setX1(currentposvect.getX1());
+			current.setY1(currentposvect.getY1());
+			current.setX2(currentposvect.getX2());
+			current.setY2(currentposvect.getY2());
+			
+			current.setLength(1+Math.abs(speed));
+			
+			if(speed < 0)
+			{
+				current.shiftOrigin();
+			}
+
+			current.Rotate(angle);
+			
+	
+			
+			
+			/*double baseVectorX = last.getX2() - last.getX1();
+			double baseVectorY = last.getY2() - last.getY1();
+			
+			double currentlength = Math.sqrt(Math.pow(baseVectorX,2)+Math.pow(baseVectorY, 2));
+			double newlength = Math.abs(speed)+distance;
+			double multiplier = newlength/currentlength;
+			
+			double scaledbaseVectorXForEnd = baseVectorX*multiplier + last.getX1();
+			double scaledbaseVectorYForEnd = baseVectorY*multiplier + last.getY1();
+			
+			double newlengthfstart = currentlength - (currentlength - distance);
+			double multfstart = newlengthfstart/currentlength;
+			
+			double scaledbaseVectorXForStart = baseVectorX*multfstart + last.getX1();
+			double scaledbaseVectorYForStart = baseVectorY*multfstart + last.getY1();
+			
+			double newLength = Math.sqrt(Math.pow(scaledbaseVectorXForStart - scaledbaseVectorXForEnd,2)+Math.pow(scaledbaseVectorYForStart - scaledbaseVectorYForEnd , 2));
+			
+			double newBaseVectorX = scaledbaseVectorXForEnd - scaledbaseVectorXForStart;
+			double newBaseVectorY = scaledbaseVectorYForEnd - scaledbaseVectorYForStart;
+			
+			double vectorX = (newBaseVectorX * Math.cos(angle) - newBaseVectorY * Math.sin(angle));
+			double vectorY = (newBaseVectorX * Math.sin(angle) + newBaseVectorY * Math.cos(angle)) ;
+
+			double newLength2 = Math.sqrt(Math.pow(vectorX,2)+Math.pow(vectorY , 2));
+			
+			VectorDefinition def = new VectorDefinition(scaledbaseVectorXForStart, scaledbaseVectorYForStart, scaledbaseVectorXForStart+vectorX, scaledbaseVectorYForStart+vectorY);
+			
+			current = def;*/
+			lastspeed = speed;
 		}
 	}
 	
@@ -91,13 +161,13 @@ public class Wheels {
 		
 		double retdata = frictionalCoefficientOfBrakes * maxBreakTorque * brakePedalPosition;
 		
-		if(speed >= 0)
-		{
-			return -1 * retdata;
-		}
-		else
+		if(speed != 0)
 		{
 			return retdata;
+		}
+		else 
+		{
+			return 0;
 		}
 	}
 
@@ -105,13 +175,13 @@ public class Wheels {
 		
 		double retdata = innerFrictionalForce;
 		
-		if(speed >= 0)
+		if(speed != 0)
 		{
-			return -1 * retdata;
+			return retdata;
 		}
 		else
 		{
-			return retdata;
+			return 0;
 		}
 	}
 	
@@ -119,7 +189,22 @@ public class Wheels {
 							  double brakingForce,
 							  double accelerationForce) {
 		
-		return innerFrictionalForce + brakingForce + accelerationForce;
+			double ret = accelerationForce;
+			
+			if(speed < 0)
+			{
+				ret += brakingForce;
+				ret += innerFrictionalForce;
+			}
+
+			if(speed > 0)
+			{
+				ret -= brakingForce;
+				ret -= innerFrictionalForce;
+			}
+			
+			return ret;
+			
 	}
 	
 	double calcAccel(double sumForces)
@@ -130,7 +215,19 @@ public class Wheels {
 
 	double calcSpeed(double accel, double lastSpeed, double timeleft)
 	{
-		return lastSpeed + timeleft*accel;
+		double retval = lastSpeed + timeleft*accel;
+		
+		int signlastSpeed = (int) Math.signum(lastSpeed);
+		int signAccel = (int) Math.signum(accel);
+		
+		if(signlastSpeed != 0 && signlastSpeed != signAccel && Math.abs(accel)*timeleft >= Math.abs(lastSpeed))
+		{
+			return 0;
+		}
+		else
+		{
+			return retval;
+		}
 	}
 	
 	

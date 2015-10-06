@@ -49,13 +49,11 @@ public class Wheels {
 		timer.cancel();
 	}
 	
-	VectorDefinition current = new VectorDefinition(100, 100, 101, 100);
-	
-	
 	double lastspeed;
 	
 	
 	VectorDefinition currentposvect = new VectorDefinition(100, 100, 101, 100);
+	VectorDefinition current = new VectorDefinition(100, 100, 101, 100);
 	
 	public VectorDefinition getPositionVector()
 	{
@@ -68,15 +66,12 @@ public class Wheels {
 	{
 		@Override
 		public void run() {
-			
-			
-			
+
 			double innerForce = calcInnerFrictionalForce();
 			double brakingForce = calcBrakingForce(sharedMemory.getBrakePedalPosition());
 			double accTorque = sharedMemory.getCurrentTorqueInNewton();
 			double accForce = calcAccelerationForce(accTorque); 
-		
-			
+
 			double resforce = calcResultantForce(innerForce,brakingForce,accForce);
 			double accel = calcAccel(resforce);
 			
@@ -90,64 +85,47 @@ public class Wheels {
 			
 			double maxturndegree = sharedMemory.getMaximumWheelsTurnDegree();
 			
-			double wheelturn = wheelpercent*maxturndegree; 
-			//calculate turn of the car
-			//turning component of the speed
-			double turnspeed = speed * Math.sin(wheelturn);
-			double turned = turnspeed * ((double)refreshInterval)/1000;
+			double wheelturn = wheelpercent*maxturndegree;
 			
-			double angle = turned / (2*sharedMemory.getDistanceBetweenAxesInMeters()*Math.PI) * 360;
-			
-			currentposvect.setLength(10);
-			currentposvect.shiftOnArrow(distance);
-			currentposvect.Rotate(angle);
-			
-			current.setX1(currentposvect.getX1());
-			current.setY1(currentposvect.getY1());
-			current.setX2(currentposvect.getX2());
-			current.setY2(currentposvect.getY2());
-			
-			current.setLength(1+Math.abs(speed));
-			
-			if(speed < 0)
+			if(wheelturn != 0)
 			{
-				current.shiftOrigin();
+				double r = sharedMemory.getDistanceBetweenAxesInMeters()/Math.sin(wheelturn);
+				double k = 2*r*Math.PI;
+				double koriv = distance/k;
+				double angle = koriv*360;
+				double h = Math.sin(angle/2)*2*r; 
+				
+				currentposvect.Rotate(angle/2);
+				currentposvect.shiftOnArrow(h);
+				currentposvect.Rotate(angle/2);
+				currentposvect.setLength(1);
+				
+				current.setX1(currentposvect.getX1());
+				current.setY1(currentposvect.getY1());
+				current.setX2(currentposvect.getX2());
+				current.setY2(currentposvect.getY2());
+				
+				if(speed != 0)
+				{
+					current.setLength(speed);
+				}
+				current.Rotate(angle);
 			}
-
-			current.Rotate(angle);
+			else
+			{
+				current.shiftOnArrow(distance);
+				if(speed != 0)
+				{
+					current.setLength(speed);
+				}
+				else
+				{
+					current.setLength(1);
+				}
+				currentposvect.shiftOnArrow(distance);
+				currentposvect.setLength(1);
+			}
 			
-	
-			
-			
-			/*double baseVectorX = last.getX2() - last.getX1();
-			double baseVectorY = last.getY2() - last.getY1();
-			
-			double currentlength = Math.sqrt(Math.pow(baseVectorX,2)+Math.pow(baseVectorY, 2));
-			double newlength = Math.abs(speed)+distance;
-			double multiplier = newlength/currentlength;
-			
-			double scaledbaseVectorXForEnd = baseVectorX*multiplier + last.getX1();
-			double scaledbaseVectorYForEnd = baseVectorY*multiplier + last.getY1();
-			
-			double newlengthfstart = currentlength - (currentlength - distance);
-			double multfstart = newlengthfstart/currentlength;
-			
-			double scaledbaseVectorXForStart = baseVectorX*multfstart + last.getX1();
-			double scaledbaseVectorYForStart = baseVectorY*multfstart + last.getY1();
-			
-			double newLength = Math.sqrt(Math.pow(scaledbaseVectorXForStart - scaledbaseVectorXForEnd,2)+Math.pow(scaledbaseVectorYForStart - scaledbaseVectorYForEnd , 2));
-			
-			double newBaseVectorX = scaledbaseVectorXForEnd - scaledbaseVectorXForStart;
-			double newBaseVectorY = scaledbaseVectorYForEnd - scaledbaseVectorYForStart;
-			
-			double vectorX = (newBaseVectorX * Math.cos(angle) - newBaseVectorY * Math.sin(angle));
-			double vectorY = (newBaseVectorX * Math.sin(angle) + newBaseVectorY * Math.cos(angle)) ;
-
-			double newLength2 = Math.sqrt(Math.pow(vectorX,2)+Math.pow(vectorY , 2));
-			
-			VectorDefinition def = new VectorDefinition(scaledbaseVectorXForStart, scaledbaseVectorYForStart, scaledbaseVectorXForStart+vectorX, scaledbaseVectorYForStart+vectorY);
-			
-			current = def;*/
 			lastspeed = speed;
 		}
 	}
@@ -202,6 +180,8 @@ public class Wheels {
 				ret -= brakingForce;
 				ret -= innerFrictionalForce;
 			}
+			
+			
 			
 			return ret;
 			

@@ -49,12 +49,15 @@ class DrawPanel extends JPanel {
         g2d.setColor(Color.blue);
         
         //scale it up
+
+        Color col = Color.blue;
         
         for (VectorDefinition vectorDefinition : vectors) {
         	
         	g2d.drawLine((int)vectorDefinition.getX1(), (int)vectorDefinition.getY1(), (int)vectorDefinition.getX2(), (int)vectorDefinition.getY2());
-            drawArrowHead(g2d, new Point((int)vectorDefinition.getX2(), (int)vectorDefinition.getY2()), new Point((int)vectorDefinition.getX1(), (int)vectorDefinition.getY1()), Color.blue);
-            g2d.setColor(Color.red);
+            drawArrowHead(g2d, new Point((int)vectorDefinition.getX2(), (int)vectorDefinition.getY2()), new Point((int)vectorDefinition.getX1(), (int)vectorDefinition.getY1()), col);
+            g2d.setColor(col);
+            col = Color.red;
 		}
         
         this.repaint();

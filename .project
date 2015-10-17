@@ -3,6 +3,7 @@
 	<name>Wheels</name>
 	<comment></comment>
 	<projects>
+		<project>FrameWork</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

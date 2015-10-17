@@ -3,7 +3,9 @@ package Implementation;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import SharedMemory.IWheels;
+import Common.IVectorDefinition;
+import SharedMemory.IWheelsGet;
+import SharedMemory.IWheelsSet;
 
 public class Wheels {
 
@@ -17,23 +19,27 @@ public class Wheels {
 	double speed = 0;
 	
 	Timer timer;
-	IWheels sharedMemory;
+	IWheelsGet sharedMemoryGet;
+	IWheelsSet sharedMemorySet;
+	
 	Refresher task = new Refresher();
 	
 	long refreshInterval;
 	
 	public Wheels(long refreshInterval,
-		   IWheels sharedMemory)
+		   IWheelsGet sharedMemoryGet,
+		   IWheelsSet sharedMemorySet)
 	{
-		this.sharedMemory = sharedMemory;
+		this.sharedMemoryGet = sharedMemoryGet;
+		this.sharedMemorySet = sharedMemorySet;
 		
-		this.mass = sharedMemory.getTotalMassInKg();
-		this.RAxes = sharedMemory.getDiameterOfDriveAxesInMeters()/2;
-		this.RWheels = sharedMemory.getDiameterOfWheelsInMeters()/2;
-		this.maxAxesTorque = sharedMemory.getMaximumTorqueInNewton();
-		this.maxBreakTorque = sharedMemory.getMaximumBrakeTorqueInNewton();
-		this.frictionalCoefficientOfBrakes = sharedMemory.getFrictionalCoefficientOfBrakes();
-		this.innerFrictionalForce = sharedMemory.getInnerFrictionalCoefficientInNewton() * 10 * mass;
+		this.mass = sharedMemoryGet.getTotalMassInKg();
+		this.RAxes = sharedMemoryGet.getDiameterOfDriveAxesInMeters()/2;
+		this.RWheels = sharedMemoryGet.getDiameterOfWheelsInMeters()/2;
+		this.maxAxesTorque = sharedMemoryGet.getMaximumTorqueInNewton();
+		this.maxBreakTorque = sharedMemoryGet.getMaximumBrakeTorqueInNewton();
+		this.frictionalCoefficientOfBrakes = sharedMemoryGet.getFrictionalCoefficientOfBrakes();
+		this.innerFrictionalForce = sharedMemoryGet.getInnerFrictionalCoefficientInNewton() * 10 * mass;
 		timer = new Timer();
 		
 		this.refreshInterval = refreshInterval;
@@ -62,14 +68,21 @@ public class Wheels {
 	
 	boolean inreverse = false;
 	
+	
+	private void SetResults()
+	{
+		sharedMemorySet.setPositionVector((IVectorDefinition)currentposvect);
+		sharedMemorySet.setMotionVectorWithSpeedAsLength((IVectorDefinition)current);
+	}
+	
 	class Refresher extends TimerTask
 	{
 		@Override
 		public void run() {
 
 			double innerForce = calcInnerFrictionalForce();
-			double brakingForce = calcBrakingForce(sharedMemory.getBrakePedalPosition());
-			double accTorque = sharedMemory.getCurrentTorqueInNewton();
+			double brakingForce = calcBrakingForce(sharedMemoryGet.getBrakePedalPosition());
+			double accTorque = sharedMemoryGet.getCurrentTorqueInNewton();
 			double accForce = calcAccelerationForce(accTorque); 
 
 			double resforce = calcResultantForce(innerForce,brakingForce,accForce);
@@ -79,17 +92,17 @@ public class Wheels {
 			
 			double distance = speed * (((double)refreshInterval)/1000);
 			
-			double maxdrivewheelstate = sharedMemory.getMaximumDriveWheelStateZeroBasedDegree();
+			double maxdrivewheelstate = sharedMemoryGet.getMaximumDriveWheelStateZeroBasedDegree();
 			
-			double wheelpercent = (sharedMemory.getDriveWheelStateZeroBasedDegree() / maxdrivewheelstate); 
+			double wheelpercent = (sharedMemoryGet.getDriveWheelStateZeroBasedDegree() / maxdrivewheelstate); 
 			
-			double maxturndegree = sharedMemory.getMaximumWheelsTurnDegree();
+			double maxturndegree = sharedMemoryGet.getMaximumWheelsTurnDegree();
 			
 			double wheelturn = wheelpercent*maxturndegree;
 			
 			if(wheelturn != 0)
 			{
-				double r = sharedMemory.getDistanceBetweenAxesInMeters()/Math.sin(wheelturn);
+				double r = sharedMemoryGet.getDistanceBetweenAxesInMeters()/Math.sin(wheelturn);
 				double k = 2*r*Math.PI;
 				double koriv = distance/k;
 				double angle = koriv*2*Math.PI;
@@ -127,6 +140,7 @@ public class Wheels {
 			}
 			
 			lastspeed = speed;
+			SetResults();
 		}
 	}
 	

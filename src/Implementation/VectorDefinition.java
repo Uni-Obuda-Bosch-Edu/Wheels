@@ -1,6 +1,9 @@
 package Implementation;
 
-public class VectorDefinition {
+import Common.I2DPoint;
+import Common.IVectorDefinition;
+
+public class VectorDefinition implements IVectorDefinition{
 
 	VectorDefinition(double x1, double y1, double x2, double y2)
 	{
@@ -127,5 +130,14 @@ public class VectorDefinition {
 	
 	private double x2;
 	private double y2;
+	@Override
+	public I2DPoint getPointStart() {
+		return new Point(x1,y1);
+	}
+
+	@Override
+	public I2DPoint getPointEnd() {
+		return new Point(x2,y2);
+	}
 	
 }

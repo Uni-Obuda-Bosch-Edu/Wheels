@@ -1,9 +1,9 @@
 
 package Test;
 
-import SharedMemory.IWheels;
+import SharedMemory.IWheelsGet;
 
-public class DummyWheels implements IWheels {
+public class DummyWheelsGet implements IWheelsGet {
 
 	private double currentTorqueInNewton;
 	

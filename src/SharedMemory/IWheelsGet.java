@@ -1,6 +1,6 @@
 package SharedMemory;
 
-public interface IWheels {
+public interface IWheelsGet {
 
 	double getCurrentTorqueInNewton();
 	double getMaximumTorqueInNewton();

@@ -8,20 +8,22 @@ import java.util.TimerTask;
 import Implementation.PointsExample;
 import Implementation.VectorDefinition;
 import Implementation.Wheels;
-import SharedMemory.IWheels;
 
 public class TestDrive {
 
 	PointsExample ex;
-	DummyWheels dummy;
+	DummyWheelsGet dummyGet;
+	DummyWheelsSet dummySet;
 	Wheels wheels;
 	Timer timer = new Timer();
 	RefreshScreenTask task = new RefreshScreenTask();
 	
 	public TestDrive()
 	{
-		dummy = new DummyWheels();
-		wheels = new Wheels(100,dummy);
+		dummyGet = new DummyWheelsGet();
+		dummySet = new DummyWheelsSet();
+		
+		wheels = new Wheels(100,dummyGet, dummySet);
 		ex = new PointsExample();
 	}
 	
@@ -49,17 +51,17 @@ public class TestDrive {
 	
 	public void SetDriveWheelState(double value)
 	{
-	    dummy.setDriveWheelStateZeroBasedDegree(value);
+	    dummyGet.setDriveWheelStateZeroBasedDegree(value);
 	}
 	
 	public void SetTorque(double torque)
 	{
-		dummy.setCurrentTorqueInNewton(torque);
+		dummyGet.setCurrentTorqueInNewton(torque);
 	}
 	
 	public void SetBrakePedalPos(double percent)
 	{
-		dummy.setBrakePedalPosition(percent);
+		dummyGet.setBrakePedalPosition(percent);
 	}
 	
 	class RefreshScreenTask extends TimerTask

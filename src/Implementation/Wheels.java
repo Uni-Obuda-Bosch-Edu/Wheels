@@ -111,7 +111,7 @@ public class Wheels {
 				currentposvect.Rotate(angle/2);
 				currentposvect.shiftOnArrow(h);
 				currentposvect.Rotate(angle/2);
-				currentposvect.setLength(1);
+				currentposvect.setLength(10);
 				
 				current.setX1(currentposvect.getX1());
 				current.setY1(currentposvect.getY1());

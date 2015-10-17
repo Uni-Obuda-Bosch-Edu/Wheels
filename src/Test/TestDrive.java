@@ -101,7 +101,7 @@ public class TestDrive {
 		drive.SetBrakePedalPos(1);
 		Sleep(2000);
 		drive.SetBrakePedalPos(0);
-		drive.SetTorque(-500);
+		drive.SetTorque(-1000);
 		double end = 0.4;
 		double current = 0;
 		

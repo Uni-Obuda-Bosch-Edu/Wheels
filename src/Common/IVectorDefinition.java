@@ -1,4 +1,4 @@
-package SharedMemory;
+package Common;
 
 public interface IVectorDefinition {
 	I2DPoint getPointStart();

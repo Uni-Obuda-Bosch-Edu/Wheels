@@ -92,7 +92,7 @@ public class Wheels {
 				double r = sharedMemory.getDistanceBetweenAxesInMeters()/Math.sin(wheelturn);
 				double k = 2*r*Math.PI;
 				double koriv = distance/k;
-				double angle = koriv*360;
+				double angle = koriv*2*Math.PI;
 				double h = Math.sin(angle/2)*2*r; 
 				
 				currentposvect.Rotate(angle/2);

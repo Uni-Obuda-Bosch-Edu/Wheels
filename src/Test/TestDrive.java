@@ -91,16 +91,16 @@ public class TestDrive {
 		drive.StartWheels();
 		drive.StartDrawing();
 		drive.SetTorque(500);
-		//drive.SetDriveWheelState(0.4);
+		drive.SetDriveWheelState(0.4);
 		Sleep(3000);
 		drive.SetTorque(0);
 		Sleep(3000);
 		drive.SetDriveWheelState(0.4);
-		/*drive.SetBrakePedalPos(1);
+		drive.SetBrakePedalPos(1);
 		Sleep(2000);
 		drive.SetBrakePedalPos(0);
-		drive.SetTorque(-500);*/
-		/*double end = 0.4;
+		drive.SetTorque(-500);
+		double end = 0.4;
 		double current = 0;
 		
 		for(int i =0;i<100;i++)
@@ -108,7 +108,7 @@ public class TestDrive {
 			current += end / 100;
 			drive.SetDriveWheelState(current);
 			Sleep(10);
-		}*/
+		}
 		
 		
 
